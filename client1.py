@@ -6,10 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-model = ChatGroq(
-    model="openai/gpt-oss-120b",
-    temperature=0.7
-)
+
 
 # Server's configuration  info
 SERVERS = {
@@ -36,7 +33,19 @@ async def main():
   for tool in tools:
     named_tool[tool.name] = tool
 
-  print(named_tool)
+  
+
+  llm = ChatGroq(
+    model="openai/gpt-oss-120b",
+    temperature=0.7
+   )
+
+  llm_with_tools = llm.bind_tools(tools)
+
+  prompt = "What is the product of 12 and 15?"
+  response = await llm_with_tools.ainvoke(prompt)
+
+  print("Response:",response)
 
 
 
