@@ -1,6 +1,7 @@
 import asyncio
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_groq import ChatGroq
+from langchain_core.messages import ToolMessage
 
 from dotenv import load_dotenv
 
@@ -54,6 +55,10 @@ async def main():
 
   tool_result = await named_tools[selected_tool].ainvoke(selected_tool_args)
   print(f"Tool result: {tool_result}")
+
+  tool_message = ToolMessage(content=tool_result, tool_name=selected_tool)
+
+  await llm_with_tools.ainvoke([prompt, response, tool_message])
 
 
 if __name__ == "__main__":
