@@ -1,5 +1,15 @@
 import asyncio
 from langchain_mcp_adapters.client import MultiServerMCPClient
+from langchain_groq import ChatGroq
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+model = ChatGroq(
+    model="openai/gpt-oss-120b",
+    temperature=0.7
+)
 
 # Server's configuration  info
 SERVERS = {
