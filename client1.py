@@ -5,15 +5,22 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 SERVERS = {
   "math": {
     "transport":"stdio",
-    "command":"/Library/Frameworks/Python.framework/Versions/3.11/bin/uv",
+    "command":"\Users\Krishna gupta\AppData\Roaming\Python\Python313\Scripts\uv.exe",
     "args":[
       "run",
       "fastmcp",
       "run",
-      "/Users/nitish/Desktopn/mcp-math-server/main.py"
+      "\Users\Krishna gupta\OneDrive\Desktop\MATH-MCP-SERVER\main.py"
     ]
   }
 }
+
+async def main():
+
+  client = MultiServerMCPClient(SERVERS)
+  tools = await client.get_tools()
+
+  
 
 async def main():
   print('')
