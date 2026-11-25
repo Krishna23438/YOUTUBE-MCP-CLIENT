@@ -5,12 +5,12 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 SERVERS = {
   "math": {
     "transport":"stdio",
-    "command":"\Users\Krishna gupta\AppData\Roaming\Python\Python313\Scripts\uv.exe",
+    "command": "uv",
     "args":[
       "run",
       "fastmcp",
       "run",
-      "\Users\Krishna gupta\OneDrive\Desktop\MATH-MCP-SERVER\main.py"
+       "C:\\Users\\Krishna gupta\\OneDrive\\Desktop\\MATH-MCP-SERVER\\main.py"
     ]
   }
 }
@@ -19,11 +19,15 @@ async def main():
 
   client = MultiServerMCPClient(SERVERS)
   tools = await client.get_tools()
+  #print(tools)
 
-  
+  named_tool = {}
 
-async def main():
-  print('')
+  for tool in tools:
+    named_tool[tool.name] = tool
+
+  print(named_tool)
+
 
 
 if __name__ == "__main__":
