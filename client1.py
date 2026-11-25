@@ -28,10 +28,10 @@ async def main():
   tools = await client.get_tools()
   #print(tools)
 
-  named_tool = {}
+  named_tools = {}
 
   for tool in tools:
-    named_tool[tool.name] = tool
+    named_tools[tool.name] = tool
 
   
 
@@ -42,11 +42,18 @@ async def main():
 
   llm_with_tools = llm.bind_tools(tools)
 
-  prompt = "What is the product of 12 and 15?"
+  prompt = "What is the product of 12 and 15 using the math tool ?"
   response = await llm_with_tools.ainvoke(prompt)
 
-  print("Response:",response)
 
+  selected_tool = response.tool_calls[0]["name"]
+  selected_tool_args = response.tool_calls[0]["args"]
+
+  print(f"Selected tool: {selected_tool}")
+  print(f"Selected tool args: {selected_tool_args}")
+
+  tool_result = await named_tools[selected_tool].ainvoke(selected_tool_args)
+  print(f"Tool result: {tool_result}")
 
 
 if __name__ == "__main__":
