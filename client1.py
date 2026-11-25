@@ -46,9 +46,14 @@ async def main():
   prompt = "What is the product of 12 and 15 using the math tool ?"
   response = await llm_with_tools.ainvoke(prompt)
 
+  if not getattr(response, "tool_calls",None):
+    print("\n LLM Reply: ", response.content)
+    return
+
 
   selected_tool = response.tool_calls[0]["name"]
   selected_tool_args = response.tool_calls[0]["args"]
+  selected_tool_id = response.tool_calls[0]['id']
 
   print(f"Selected tool: {selected_tool}")
   print(f"Selected tool args: {selected_tool_args}")
@@ -56,9 +61,10 @@ async def main():
   tool_result = await named_tools[selected_tool].ainvoke(selected_tool_args)
   print(f"Tool result: {tool_result}")
 
-  tool_message = ToolMessage(content=tool_result, tool_name=selected_tool)
+  tool_message = ToolMessage(content=tool_result, tool_call_id=selected_tool_id)
 
-  await llm_with_tools.ainvoke([prompt, response, tool_message])
+  final_response = await llm_with_tools.ainvoke([prompt, response, tool_message])
+  print(f"final response: {final_response.content}")
 
 
 if __name__ == "__main__":
