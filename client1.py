@@ -2,6 +2,7 @@ import asyncio
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_groq import ChatGroq
 from langchain_core.messages import ToolMessage
+import json
 
 from dotenv import load_dotenv
 
@@ -51,19 +52,21 @@ async def main():
     return
 
 
-  selected_tool = response.tool_calls[0]["name"]
-  selected_tool_args = response.tool_calls[0]["args"]
-  selected_tool_id = response.tool_calls[0]['id']
+  tool_messages = []
+  for tc in response.tool_calls:
+      selected_tool = tc["name"]
+      selected_tool_args = tc["args"]
+      selected_tool_id = tc['id']
 
-  print(f"Selected tool: {selected_tool}")
-  print(f"Selected tool args: {selected_tool_args}")
+      print(f"\n-> Executing remote tool: {selected_tool}")
+      print("  with args: ", selected_tool_args)
 
-  tool_result = await named_tools[selected_tool].ainvoke(selected_tool_args)
-  print(f"Tool result: {tool_result}")
+      result = await named_tools[selected_tool].ainvoke(selected_tool_args)
+      tool_messages.append(ToolMessage(tool_call_id=selected_tool_id, content=json.dumps(result)))
+    
+      
 
-  tool_message = ToolMessage(content=tool_result, tool_call_id=selected_tool_id)
-
-  final_response = await llm_with_tools.ainvoke([prompt, response, tool_message])
+  final_response = await llm_with_tools.ainvoke([prompt, response, *tool_messages])
   print(f"final response: {final_response.content}")
 
 
