@@ -64,4 +64,17 @@ if "initialized" not in st.session_state:
 
   # 3) Bind tools
   st.session_state.llm_with_tools = st.session_state.llm.bind_tools(tools)
-  
+
+  # 4) Conversation state
+  st.session_state.history = [SystemMessage(content=SYSTEM_PROMPT)]
+  st.session_state.initialized = True
+
+# Render Chat historu (skip system + tool messages ; hide intermediate AI with tool_calls)
+for msg in  st.session_state.history:
+  if isinstance(msg, HumanMessage):
+    with st.chat_message('user'):
+      st.markdown(msg.content)
+  elif isinstance(msg, AIMessage):
+    # Skip assistance messages that contain tool_calls(intermediate "fetching...")
+    if getattr(msg, "tool_calls", None):
+      continue
