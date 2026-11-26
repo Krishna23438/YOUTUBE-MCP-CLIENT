@@ -114,3 +114,14 @@ if user_text:
           args = json.loads(args)
         except:
           pass
+
+      tool = st.session_state.tool_by_name[name]
+      res = asyncio.run(tool.ainvoke(args))
+      tool_msgs.append(ToolMessage(tool_call_id=tc["id"], content=json.dumps(res)))
+
+    st.session_state.history.extend(tool_msgs)
+
+    # 3) Final assistant reply using tool outputs -> render & store
+    final = asyncio.run(st.session_state.llm.ainvoke(st.session_state.history))
+    with st.chat_message("assistant"):
+      
