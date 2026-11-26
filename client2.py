@@ -86,6 +86,9 @@ for msg in  st.session_state.history:
 # Chat input 
 user_text = st.chat_input("Type a message...")
 if user_text:
-  with st.chat_messagw("user"):
+  with st.chat_message("user"):
     st.markdown(user_text)
   st.session_state.history.append(HumanMessage(content=user_text))
+
+  # First pass: let the model decide whether to call tools
+  first =  asyncio.run(st.session_state.llm_with_tools.ainvoke(st.session_state.history))
