@@ -48,3 +48,20 @@ st.title("🧰 MCP Chat")
 load_dotenv()
 
 #One-time init
+
+if "initialized" not in st.session_state:
+  # 1) LLM
+  st.session_state.llm = ChatGroq(
+    model="openai/gpt-oss-120b",
+    temperature=0.7
+   )
+
+  # 2) MCP Tools
+  st.session_state.client = MultiServerMCPClient(SERVERS)
+  tools = asyncio.run(st.session_state.client.get_tools())
+  st.session_state.tools = tools
+  st.session_state.tool_by_name = {t.name: t for t in tools}
+
+  # 3) Bind tools
+  st.session_state.llm_with_tools = st.session_state.llm.bind_tools(tools)
+  
