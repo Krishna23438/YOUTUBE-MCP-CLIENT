@@ -78,3 +78,14 @@ for msg in  st.session_state.history:
     # Skip assistance messages that contain tool_calls(intermediate "fetching...")
     if getattr(msg, "tool_calls", None):
       continue
+    with st.chat_message("assistance"):
+      st.markdown(msg.content)
+
+  # Tool message and SystemMessage are not rendered as bubbles
+
+# Chat input 
+user_text = st.chat_input("Type a message...")
+if user_text:
+  with st.chat_messagw("user"):
+    st.markdown(user_text)
+  st.session_state.history.append(HumanMessage(content=user_text))
