@@ -93,3 +93,24 @@ if user_text:
   # First pass: let the model decide whether to call tools
   first =  asyncio.run(st.session_state.llm_with_tools.ainvoke(st.session_state.history))
   tool_calls = getattr(first, "tool_calls", None)
+
+  if not tool_calls:
+    # No tools -> show & store assistant reply
+    with st.chat_message("assistant"):
+      st.markdown(first.content or "")
+    st.session_state.history.append(first)
+  else:
+    # -- IMPORTANT ORDER --
+    # 1) Append assistant message with tool_calls (do NOT render)
+    st.session_state.history.append(first)
+
+    # 2) Execute requested tools and append ToolMessages (do NOT render)
+    tool_msgs = []
+    for tc in tool_calls:
+      name = tc["name"]
+      args = tc.get("args") or {}
+      if isinstance(args , str):
+        try:
+          args = json.loads(args)
+        except:
+          pass
