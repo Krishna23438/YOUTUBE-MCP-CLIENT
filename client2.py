@@ -124,4 +124,5 @@ if user_text:
     # 3) Final assistant reply using tool outputs -> render & store
     final = asyncio.run(st.session_state.llm.ainvoke(st.session_state.history))
     with st.chat_message("assistant"):
-      
+      st.markdown(final.content or "")
+    st.session_state.history.append(AIMessage(content=final.content or ""))
