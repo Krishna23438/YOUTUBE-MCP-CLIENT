@@ -92,3 +92,4 @@ if user_text:
 
   # First pass: let the model decide whether to call tools
   first =  asyncio.run(st.session_state.llm_with_tools.ainvoke(st.session_state.history))
+  tool_calls = getattr(first, "tool_calls", None)
