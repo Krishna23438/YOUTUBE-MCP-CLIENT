@@ -19,10 +19,16 @@ SERVERS = {
       "run",
       "fastmcp",
       "run",
-       "C:\\Users\\Krishna gupta\\OneDrive\\Desktop\\MATH-MCP-SERVER\\main.py"
+       r"C:\Users\Krishna gupta\OneDrive\Desktop\MATH-MCP-SERVER\main.py"
     ]
+  },
+  "expense":{
+    "transport": "streamable_http", # if this fails, try "sse"
+    "url": "https://krishnagupta.fastmcp.app/mcp"
   }
 }
+
+
 
 async def main():
 
@@ -35,7 +41,7 @@ async def main():
   for tool in tools:
     named_tools[tool.name] = tool
 
-  
+  print("Available tools:",named_tools.keys())
 
   llm = ChatGroq(
     model="openai/gpt-oss-120b",
@@ -44,7 +50,7 @@ async def main():
 
   llm_with_tools = llm.bind_tools(tools)
 
-  prompt = "What is the product of 12 and 15 using the math tool ?"
+  prompt = "Add an expense - Rs 800 for groceries on 4th November."
   response = await llm_with_tools.ainvoke(prompt)
 
   if not getattr(response, "tool_calls",None):
